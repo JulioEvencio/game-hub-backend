@@ -1,0 +1,19 @@
+server:
+    port: ${SERVER_PORT}
+spring:
+    datasource:
+        url: ${DATABASE_URL}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
+#spring-doc:
+#    pathsToMatch: /api/**
+#    swagger-ui:
+#        use-root-path: true
+api:
+    url:
+        frontend: ${URL_FRONTEND}
+    security:
+        token:
+            jwt:
+                secret-key: ${TOKEN_SECRET_KEY}
+                expire-length: ${TOKEN_EXPIRE_LENGTH}

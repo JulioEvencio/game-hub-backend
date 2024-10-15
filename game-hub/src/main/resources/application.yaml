@@ -1,0 +1,15 @@
+spring:
+    profiles:
+        active: ${SPRING_PROFILE_ACTIVE}
+    application:
+        name: game-hub
+    datasource:
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: none
+            dialect: org.hibernate.dialect.PostgreSQLDialect
+    servlet:
+        multipart:
+            max-file-size: 500MB
+            max-request-size: 500MB
