@@ -1,11 +1,14 @@
 package julioigreja.gamehub.services;
 
 import jakarta.transaction.Transactional;
+import julioigreja.gamehub.dto.controllers.auth.LoginRequestDTO;
+import julioigreja.gamehub.dto.controllers.auth.LoginResponseDTO;
 import julioigreja.gamehub.dto.controllers.auth.RegisterRequestDTO;
 import julioigreja.gamehub.dto.controllers.auth.RegisterResponseDTO;
 import julioigreja.gamehub.dto.entities.EntityMapperDTO;
 import julioigreja.gamehub.entities.RoleEntity;
 import julioigreja.gamehub.entities.UserEntity;
+import julioigreja.gamehub.exceptions.custom.ApiAuthenticationException;
 import julioigreja.gamehub.exceptions.custom.ApiNotFoundException;
 import julioigreja.gamehub.repositories.RoleRepository;
 import julioigreja.gamehub.repositories.UserRepository;
@@ -49,6 +52,19 @@ public class AuthServiceImpl implements AuthService {
                 EntityMapperDTO.fromEntity(user),
                 jwtService.createAccessToken(user.getUsername(), List.of("ROLE_USER"))
         );
+    }
+
+    @Override
+    public LoginResponseDTO login(LoginRequestDTO dto) {
+        UserEntity user = userRepository.findByEmail(dto.email()).orElseThrow(() -> new ApiAuthenticationException("E-mail not found"));
+
+        if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
+            throw new ApiAuthenticationException("Invalid password");
+        }
+
+        List<String> roles = user.getRoles().stream().map(RoleEntity::getName).toList();
+
+        return new LoginResponseDTO(jwtService.createAccessToken(user.getUsername(), roles));
     }
 
     private void validateUserExists(RegisterRequestDTO dto) {

@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import julioigreja.gamehub.dto.controllers.auth.LoginRequestDTO;
+import julioigreja.gamehub.dto.controllers.auth.LoginResponseDTO;
 import julioigreja.gamehub.dto.controllers.auth.RegisterRequestDTO;
 import julioigreja.gamehub.dto.controllers.auth.RegisterResponseDTO;
 import julioigreja.gamehub.exceptions.ApiMessageError;
@@ -55,6 +57,34 @@ public class AuthController {
         RegisterResponseDTO response = authService.register(dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(
+            summary = "Generate jwt token",
+            description = "Generate jwt token",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Generate jwt token",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = LoginResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO dto) {
+        LoginResponseDTO response = authService.login(dto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
