@@ -21,19 +21,37 @@ public class AuthServiceImpl implements AuthService {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+
+    private final EmailService emailService;
     private final JWTService jwtService;
+
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(RoleRepository roleRepository, UserRepository userRepository, JWTService jwtService, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(RoleRepository roleRepository, UserRepository userRepository, EmailService emailService, JWTService jwtService, PasswordEncoder passwordEncoder) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+
+        this.emailService = emailService;
         this.jwtService = jwtService;
+
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
     @Override
     public RegisterResponseDTO register(RegisterRequestDTO dto) {
+        this.validateUserExists(dto);
+
+        UserEntity user = this.createUserEntity(dto);
+
+        emailService.sendEmailRegister(user.getUsername(), user.getEmail());
+
+        return new RegisterResponseDTO(
+                EntityMapperDTO.fromEntity(user),
+                jwtService.createAccessToken(user.getUsername(), List.of("ROLE_USER"))
+        );
+    }
+
+    private void validateUserExists(RegisterRequestDTO dto) {
         if (userRepository.findByUsername(dto.username()).isPresent()) {
             throw new ApiNotFoundException("Username already exists");
         }
@@ -41,7 +59,10 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.findByEmail(dto.email()).isPresent()) {
             throw new ApiNotFoundException("E-mail already exists");
         }
+    }
 
+    @Transactional
+    private UserEntity createUserEntity(RegisterRequestDTO dto) {
         UserEntity user = new UserEntity();
 
         user.setUsername(dto.username());
@@ -59,10 +80,7 @@ public class AuthServiceImpl implements AuthService {
 
         user.setRoles(roles);
 
-        return new RegisterResponseDTO(
-                EntityMapperDTO.fromEntity(userRepository.save(user)),
-                jwtService.createAccessToken(user.getUsername(), List.of("ROLE_USER"))
-        );
+        return userRepository.save(user);
     }
 
 }

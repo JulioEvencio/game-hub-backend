@@ -2,12 +2,14 @@ package julioigreja.gamehub.dto.controllers.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 
 public record RegisterRequestDTO(
         @NotBlank(message = "Invalid username")
+        @Pattern(regexp = "^[a-z0-9]*$", message = "Username must be lowercase letters and numbers only")
         @Size(max = 20, min = 3, message = "The username must be between 3 and 20 characters long")
         String username,
 

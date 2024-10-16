@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Game Hub</title>
+</head>
+<body>
+    <h1>Welcome to Game Hub, <span th:text="${username}">Username</span></h1>
+
+    <p>
+        We are thrilled to have you join our community of gamers. Dive in and start sharing your incredible gaming experiences!
+    </p>
+
+    <p>
+        Here at Game Hub, you can:
+
+        <ul>
+            <li>Discover new games</li>
+            <li>Share your own creations</li>
+            <li>Connect with other gamers</li>
+        </ul>
+    </p>
+
+    <p>
+        Access Game Hub at <a th:href="${frontEndURL}" target="_blank">this link</a>
+    </p>
+</body>
+</html>
