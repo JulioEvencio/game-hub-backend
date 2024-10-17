@@ -13,6 +13,8 @@ spring:
 #    swagger-ui:
 #        use-root-path: true
 api:
+    file:
+        directory: ${FILE_DIRECTORY}
     url:
         frontend: ${URL_FRONTEND}
     security:

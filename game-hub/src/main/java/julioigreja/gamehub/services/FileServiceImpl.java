@@ -2,6 +2,7 @@ package julioigreja.gamehub.services;
 
 import julioigreja.gamehub.exceptions.custom.ApiNotFoundException;
 import julioigreja.gamehub.exceptions.custom.ApiValidationException;
+import julioigreja.gamehub.util.ApiUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -20,7 +20,7 @@ public class FileServiceImpl implements FileService {
     public void upload(String fileName, String target, MultipartFile file) {
         try {
             Path targetFolder = this.createFolder(target);
-            Path targetLocation = targetFolder.resolve(fileName + this.getFileExtension(file));
+            Path targetLocation = targetFolder.resolve(fileName + ApiUtil.getFileExtension(file));
 
             file.transferTo(targetLocation.toFile());
         } catch (IOException | StringIndexOutOfBoundsException e) {
@@ -49,12 +49,6 @@ public class FileServiceImpl implements FileService {
         }
 
         return folder;
-    }
-
-    private String getFileExtension(MultipartFile file) {
-        String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
-
-        return originalFilename.substring(originalFilename.lastIndexOf('.'));
     }
 
 }
