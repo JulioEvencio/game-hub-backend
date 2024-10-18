@@ -4,6 +4,7 @@ import julioigreja.gamehub.exceptions.custom.ApiAuthenticationException;
 import julioigreja.gamehub.exceptions.custom.ApiNotFoundException;
 import julioigreja.gamehub.exceptions.custom.ApiValidationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -50,6 +51,13 @@ public class CustomRestExceptionHandler {
     @ExceptionHandler(ApiValidationException.class)
     public ResponseEntity<ApiMessageError> handlerException(ApiValidationException e) {
         ApiMessageError error = new ApiMessageError("Invalid data", List.of(e.getMessage()));
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ApiMessageError> handlerException(PropertyReferenceException e) {
+        ApiMessageError error = new ApiMessageError("Invalid data", List.of("Invalid data"));
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }

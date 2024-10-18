@@ -7,11 +7,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import julioigreja.gamehub.dto.controllers.game.GameFindAllResponseDTO;
 import julioigreja.gamehub.dto.controllers.game.GameFindBySlugResponseDTO;
 import julioigreja.gamehub.dto.controllers.game.GameUploadRequestDTO;
 import julioigreja.gamehub.dto.controllers.game.GameUploadResponseDTO;
 import julioigreja.gamehub.exceptions.ApiMessageError;
 import julioigreja.gamehub.services.GameService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +58,34 @@ public class GameController {
     @GetMapping(path = "/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GameFindBySlugResponseDTO> findBySlug(@PathVariable String slug) {
         GameFindBySlugResponseDTO response = gameService.findBySlug(slug);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Find all games",
+            description = "Find all games",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "All games returned",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = GameFindAllResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GameFindAllResponseDTO> findAll(@PageableDefault Pageable pageable) {
+        GameFindAllResponseDTO response = gameService.findAll(pageable);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

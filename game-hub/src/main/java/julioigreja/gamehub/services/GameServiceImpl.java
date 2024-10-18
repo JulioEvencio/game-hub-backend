@@ -1,6 +1,7 @@
 package julioigreja.gamehub.services;
 
 import jakarta.transaction.Transactional;
+import julioigreja.gamehub.dto.controllers.game.GameFindAllResponseDTO;
 import julioigreja.gamehub.dto.controllers.game.GameFindBySlugResponseDTO;
 import julioigreja.gamehub.dto.controllers.game.GameUploadRequestDTO;
 import julioigreja.gamehub.dto.controllers.game.GameUploadResponseDTO;
@@ -11,6 +12,8 @@ import julioigreja.gamehub.exceptions.custom.ApiValidationException;
 import julioigreja.gamehub.repositories.*;
 import julioigreja.gamehub.util.ApiUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,8 +55,16 @@ public class GameServiceImpl implements GameService {
 
         return new GameFindBySlugResponseDTO(
                 EntityMapperDTO.fromEntity(game.getUser()),
-                EntityMapperDTO.fromEntity(game)
+                EntityMapperDTO.fromEntity(game),
+                game.getComments().stream().map(EntityMapperDTO::fromEntity).toList()
         );
+    }
+
+    @Override
+    public GameFindAllResponseDTO findAll(Pageable pageable) {
+        Page<GameEntity> games = gameRepository.findAll(pageable);
+
+        return new GameFindAllResponseDTO(games.map(EntityMapperDTO::fromEntity));
     }
 
     @Override
