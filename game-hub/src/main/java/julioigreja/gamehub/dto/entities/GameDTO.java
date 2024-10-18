@@ -2,6 +2,7 @@ package julioigreja.gamehub.dto.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record GameDTO(
@@ -11,7 +12,8 @@ public record GameDTO(
         String slug,
         Long amountDownloads,
         Instant createdAt,
-        String picture,
-        String file,
+        String coverImageUrl,
+        String fileUrl,
+        List<String> screenshotsUrl,
         Long likes
 ) implements Serializable {}

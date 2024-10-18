@@ -3,6 +3,7 @@ package julioigreja.gamehub.entities;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,6 +16,9 @@ public class RoleEntity implements GrantedAuthority {
 
     @Column(nullable = false, unique = true, length = 10)
     private String name;
+
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    List<UserEntity> users;
 
     @Override
     public String getAuthority() {
@@ -35,6 +39,14 @@ public class RoleEntity implements GrantedAuthority {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserEntity> users) {
+        this.users = users;
     }
 
 }

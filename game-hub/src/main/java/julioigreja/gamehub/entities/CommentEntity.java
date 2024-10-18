@@ -19,6 +19,14 @@ public class CommentEntity {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "game_id")
+    private GameEntity game;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
     public UUID getId() {
         return id;
     }
@@ -41,6 +49,22 @@ public class CommentEntity {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public GameEntity getGame() {
+        return game;
+    }
+
+    public void setGame(GameEntity game) {
+        this.game = game;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
 }

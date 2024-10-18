@@ -15,6 +15,7 @@ import julioigreja.gamehub.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -89,7 +90,10 @@ public class AuthServiceImpl implements AuthService {
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
+        user.setCreatedAt(Instant.now());
         user.setGames(new ArrayList<>());
+        user.setComments(new ArrayList<>());
+        user.setLikes(new ArrayList<>());
 
         List<RoleEntity> roles = new ArrayList<>();
         roles.add(roleRepository.findByName("ROLE_USER").orElseThrow(RuntimeException::new));

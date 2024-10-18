@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import julioigreja.gamehub.dto.controllers.game.GameFindBySlugResponseDTO;
 import julioigreja.gamehub.dto.controllers.game.GameUploadRequestDTO;
 import julioigreja.gamehub.dto.controllers.game.GameUploadResponseDTO;
 import julioigreja.gamehub.exceptions.ApiMessageError;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/api/games")
 @Tag(name = "Game", description = "Endpoints for games")
@@ -26,6 +29,34 @@ public class GameController {
 
     public GameController(GameService gameService) {
         this.gameService = gameService;
+    }
+
+    @Operation(
+            summary = "Find a game by slug",
+            description = "Find a game by slug",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Game found",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = GameFindBySlugResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping(path = "/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GameFindBySlugResponseDTO> findBySlug(@PathVariable String slug) {
+        GameFindBySlugResponseDTO response = gameService.findBySlug(slug);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @Operation(
@@ -51,8 +82,8 @@ public class GameController {
             }
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GameUploadResponseDTO> create(@Valid @ModelAttribute GameUploadRequestDTO dto, @RequestPart MultipartFile picture, @RequestPart MultipartFile file) {
-        GameUploadResponseDTO response = gameService.create(dto, picture, file);
+    public ResponseEntity<GameUploadResponseDTO> create(@Valid @ModelAttribute GameUploadRequestDTO dto, @RequestPart MultipartFile coverImage, @RequestPart MultipartFile file, @RequestPart List<MultipartFile> screenshots) {
+        GameUploadResponseDTO response = gameService.create(dto, coverImage, file, screenshots);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "picture_url", nullable = false, length = 255)
     private String pictureURL;
 
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
     @Column(name = "account_non_expired", nullable = false)
     private boolean accountNonExpired;
 
@@ -50,6 +54,12 @@ public class UserEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<GameEntity> games;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<CommentEntity> comments;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<LikeEntity> likes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -118,6 +128,14 @@ public class UserEntity implements UserDetails {
         this.pictureURL = pictureURL;
     }
 
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public void setAccountNonExpired(boolean accountNonExpired) {
         this.accountNonExpired = accountNonExpired;
     }
@@ -148,6 +166,22 @@ public class UserEntity implements UserDetails {
 
     public void setGames(List<GameEntity> games) {
         this.games = games;
+    }
+
+    public List<CommentEntity> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentEntity> comments) {
+        this.comments = comments;
+    }
+
+    public List<LikeEntity> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<LikeEntity> likes) {
+        this.likes = likes;
     }
 
 }

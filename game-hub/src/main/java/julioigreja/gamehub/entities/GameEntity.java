@@ -16,7 +16,7 @@ public class GameEntity {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-    @Lob
+    @Column(nullable = false, unique = false, length = 10000)
     private String description;
 
     @Column(nullable = false, unique = true, length = 50)
@@ -28,16 +28,19 @@ public class GameEntity {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    private FileEntity picture;
+    @OneToOne(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private CoverImageEntity coverImage;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private FileEntity file;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private List<ScreenshotEntity> screenshots;
+
+    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
     private List<CommentEntity> comments;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<LikeEntity> likes;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -92,12 +95,12 @@ public class GameEntity {
         this.createdAt = createdAt;
     }
 
-    public FileEntity getPicture() {
-        return picture;
+    public CoverImageEntity getCoverImage() {
+        return coverImage;
     }
 
-    public void setPicture(FileEntity picture) {
-        this.picture = picture;
+    public void setCoverImage(CoverImageEntity coverImage) {
+        this.coverImage = coverImage;
     }
 
     public FileEntity getFile() {
@@ -106,6 +109,14 @@ public class GameEntity {
 
     public void setFile(FileEntity file) {
         this.file = file;
+    }
+
+    public List<ScreenshotEntity> getScreenshots() {
+        return screenshots;
+    }
+
+    public void setScreenshots(List<ScreenshotEntity> screenshots) {
+        this.screenshots = screenshots;
     }
 
     public List<CommentEntity> getComments() {

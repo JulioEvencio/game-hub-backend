@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_files")
-public class FileEntity {
+@Table(name = "tb_cover_images")
+public class CoverImageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
