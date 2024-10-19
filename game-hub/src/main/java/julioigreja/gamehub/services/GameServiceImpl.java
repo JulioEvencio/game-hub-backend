@@ -12,6 +12,7 @@ import julioigreja.gamehub.exceptions.custom.ApiValidationException;
 import julioigreja.gamehub.repositories.*;
 import julioigreja.gamehub.util.ApiUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,17 +33,19 @@ public class GameServiceImpl implements GameService {
 
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
+    private final CoverImageRepository coverImageRepository;
 
     private final FileService fileService;
 
     private static final List<String> IMAGE_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png");
     private static final String ZIP_TYPE = "application/zip";
 
-    public GameServiceImpl(@Value("${api.file.directory}") String fileDirectory, UserRepository userRepository, GameRepository gameRepository, FileService fileService) {
+    public GameServiceImpl(@Value("${api.file.directory}") String fileDirectory, UserRepository userRepository, GameRepository gameRepository, CoverImageRepository coverImageRepository, FileService fileService) {
         this.fileDirectory = fileDirectory;
 
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
+        this.coverImageRepository = coverImageRepository;
 
         this.fileService = fileService;
     }
@@ -92,9 +96,15 @@ public class GameServiceImpl implements GameService {
 
         GameEntity game = this.createGameEntity(dto, coverImageEntity, fileEntity, screenshotEntities);
 
-        this.generateControllerURL(game);
-
         return new GameUploadResponseDTO(EntityMapperDTO.fromEntity(game));
+    }
+
+    @Override
+    public InputStreamResource downloadCoverImage(String gameSlug) {
+        CoverImageEntity coverImage = coverImageRepository.findByGame_Slug(gameSlug).orElseThrow(() -> new ApiNotFoundException("Cover image not found"));
+        InputStream inputStream = fileService.download(coverImage.getFileUrl());
+
+        return new InputStreamResource(inputStream);
     }
 
     private void validateGame(GameUploadRequestDTO dto, MultipartFile coverImage, MultipartFile file, List<MultipartFile> screenshots) {
@@ -186,7 +196,7 @@ public class GameServiceImpl implements GameService {
 
     private void generateControllerURL(GameEntity game) {
         String serverURL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        String controllerCoverImage = "/api/games/picture/";
+        String controllerCoverImage = "/api/games/cover-image/";
         String controllerFile = "/api/games/file/";
         String controllerScreenshot = "/api/games/screenshot/";
 

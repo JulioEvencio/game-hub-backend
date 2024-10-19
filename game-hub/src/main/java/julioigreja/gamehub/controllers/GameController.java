@@ -13,6 +13,7 @@ import julioigreja.gamehub.dto.controllers.game.GameUploadRequestDTO;
 import julioigreja.gamehub.dto.controllers.game.GameUploadResponseDTO;
 import julioigreja.gamehub.exceptions.ApiMessageError;
 import julioigreja.gamehub.services.GameService;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -117,6 +118,34 @@ public class GameController {
         GameUploadResponseDTO response = gameService.create(dto, coverImage, file, screenshots);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(
+            summary = "Download a game cover image",
+            description = "Download a game cover image",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "downloaded cover image",
+                            content = @Content(
+                                    mediaType = MediaType.IMAGE_JPEG_VALUE,
+                                    schema = @Schema(implementation = InputStreamResource.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping(path = "/cover-image/{game-slug}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<InputStreamResource> downloadCoverImage(@PathVariable(name = "game-slug") String gameSlug) {
+        InputStreamResource response = gameService.downloadCoverImage(gameSlug);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
