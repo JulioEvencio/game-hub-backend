@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/games").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/games/{slug}", "/api/games", "/api/games/cover-image/{game-slug}", "/api/games/file/{game-slug}", "/api/games/screenshot/{game-slug}/{screenshot-uuid}").permitAll()
                         .anyRequest().denyAll()

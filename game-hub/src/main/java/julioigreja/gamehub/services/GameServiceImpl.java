@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.InputStream;
 import java.time.Instant;
@@ -59,7 +58,7 @@ public class GameServiceImpl implements GameService {
     public GameFindBySlugResponseDTO findBySlug(String slug) {
         GameEntity game = gameRepository.findBySlug(slug).orElseThrow(() -> new ApiNotFoundException("Game not found"));
 
-        this.generateControllerURL(game);
+        ApiUtil.generateControllerURL(game);
 
         return new GameFindBySlugResponseDTO(
                 EntityMapperDTO.fromEntity(game.getUser()),
@@ -73,7 +72,7 @@ public class GameServiceImpl implements GameService {
         Page<GameEntity> games = gameRepository.findAll(pageable);
 
         for (GameEntity game : games) {
-            this.generateControllerURL(game);
+            ApiUtil.generateControllerURL(game);
         }
 
         return new GameFindAllResponseDTO(games.map(EntityMapperDTO::fromEntity));
@@ -216,18 +215,6 @@ public class GameServiceImpl implements GameService {
         screenshot.setFileUrl(url);
 
         return screenshot;
-    }
-
-    private void generateControllerURL(GameEntity game) {
-        String serverURL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        String controllerCoverImage = "/api/games/cover-image/";
-        String controllerFile = "/api/games/file/";
-        String controllerScreenshot = "/api/games/screenshot/";
-
-        game.getCoverImage().setFileUrl(serverURL + controllerCoverImage + game.getSlug());
-        game.getFile().setFileUrl(serverURL + controllerFile + game.getSlug());
-
-        game.getScreenshots().forEach(screenshot -> screenshot.setFileUrl(serverURL + controllerScreenshot + game.getSlug() + "/" + screenshot.getId()));
     }
 
 }
