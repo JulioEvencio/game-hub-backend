@@ -7,5 +7,6 @@ import java.util.UUID;
 public record CommentDTO(
         UUID id,
         String content,
-        Instant createdAt
+        Instant createdAt,
+        String user
 ) implements Serializable {}

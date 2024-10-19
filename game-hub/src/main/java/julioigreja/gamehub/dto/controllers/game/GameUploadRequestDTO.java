@@ -13,6 +13,6 @@ public record GameUploadRequestDTO(
         String name,
 
         @NotBlank(message = "Invalid description")
-        @Size(max = 10000, min = 3, message = "The name must be between 3 and 50 characters long")
+        @Size(max = 10000, min = 3, message = "The description must be between 3 and 10000 characters long")
         String description
 ) implements Serializable {}
