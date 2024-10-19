@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface GameService {
 
@@ -21,5 +22,7 @@ public interface GameService {
     InputStreamResource downloadCoverImage(String gameSlug);
 
     InputStreamResource downloadFile(String gameSlug);
+
+    InputStreamResource downloadScreenshot(String gameSlug, UUID screenshotUUID);
 
 }

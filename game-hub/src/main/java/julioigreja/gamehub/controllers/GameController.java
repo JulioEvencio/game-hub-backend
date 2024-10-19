@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/api/games")
@@ -127,10 +128,16 @@ public class GameController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "downloaded cover image",
-                            content = @Content(
-                                    mediaType = MediaType.IMAGE_JPEG_VALUE,
-                                    schema = @Schema(implementation = InputStreamResource.class)
-                            )
+                            content = {
+                                    @Content(
+                                            mediaType = MediaType.IMAGE_PNG_VALUE,
+                                            schema = @Schema(implementation = InputStreamResource.class)
+                                    ),
+                                    @Content(
+                                            mediaType = MediaType.IMAGE_JPEG_VALUE,
+                                            schema = @Schema(implementation = InputStreamResource.class)
+                                    )
+                            }
                     ),
                     @ApiResponse(
                             description = "Request error",
@@ -141,7 +148,7 @@ public class GameController {
                     )
             }
     )
-    @GetMapping(path = "/cover-image/{game-slug}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(path = "/cover-image/{game-slug}", produces = { MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE })
     public ResponseEntity<InputStreamResource> downloadCoverImage(@PathVariable(name = "game-slug") String gameSlug) {
         InputStreamResource response = gameService.downloadCoverImage(gameSlug);
 
@@ -172,6 +179,40 @@ public class GameController {
     @GetMapping(path = "/file/{game-slug}", produces = "application/zip")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable(name = "game-slug") String gameSlug) {
         InputStreamResource response = gameService.downloadFile(gameSlug);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Download a game screenshot",
+            description = "Download a game screenshot",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "downloaded screenshot",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaType.IMAGE_PNG_VALUE,
+                                            schema = @Schema(implementation = InputStreamResource.class)
+                                    ),
+                                    @Content(
+                                            mediaType = MediaType.IMAGE_JPEG_VALUE,
+                                            schema = @Schema(implementation = InputStreamResource.class)
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping(path = "/screenshot/{game-slug}/{screenshot-uuid}", produces = { MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE })
+    public ResponseEntity<InputStreamResource> downloadScreenshot(@PathVariable(name = "game-slug") String gameSlug, @PathVariable(name = "screenshot-uuid") UUID screenshotUUID) {
+        InputStreamResource response = gameService.downloadScreenshot(gameSlug, screenshotUUID);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

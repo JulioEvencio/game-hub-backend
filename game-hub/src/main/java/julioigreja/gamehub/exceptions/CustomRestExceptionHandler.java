@@ -8,6 +8,7 @@ import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -35,6 +36,13 @@ public class CustomRestExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiMessageError> handlerException(HttpMessageNotReadableException e) {
         ApiMessageError error = new ApiMessageError("Bad Request", List.of("Invalid JSON"));
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ApiMessageError> handlerException(HttpMediaTypeNotAcceptableException e) {
+        ApiMessageError error = new ApiMessageError("Bad Request", List.of("Bad request..."));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
