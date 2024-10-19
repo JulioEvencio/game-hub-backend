@@ -70,6 +70,10 @@ public class GameServiceImpl implements GameService {
     public GameFindAllResponseDTO findAll(Pageable pageable) {
         Page<GameEntity> games = gameRepository.findAll(pageable);
 
+        for (GameEntity game : games) {
+            this.generateControllerURL(game);
+        }
+
         return new GameFindAllResponseDTO(games.map(EntityMapperDTO::fromEntity));
     }
 
