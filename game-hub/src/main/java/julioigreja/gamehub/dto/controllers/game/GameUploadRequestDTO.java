@@ -9,7 +9,7 @@ import java.io.Serializable;
 public record GameUploadRequestDTO(
         @NotBlank(message = "Invalid name")
         @Size(max = 50, min = 3, message = "The name must be between 3 and 50 characters long")
-        @Pattern(regexp = "^[a-z0-9 ]+$", message = "Name must contain only lowercase letters, numbers, and spaces")
+        @Pattern(regexp = "^[a-z0-9_ ]+$", message = "Name must contain only lowercase letters, numbers, spaces, and underscores")
         String name,
 
         @NotBlank(message = "Invalid description")

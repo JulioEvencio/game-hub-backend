@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 public record RegisterRequestDTO(
         @NotBlank(message = "Invalid username")
-        @Pattern(regexp = "^[a-z0-9]*$", message = "Username must be lowercase letters and numbers only")
+        @Pattern(regexp = "^[a-z0-9_]*$", message = "Username must be lowercase letters, numbers, and underscores only")
         @Size(max = 20, min = 3, message = "The username must be between 3 and 20 characters long")
         String username,
 
