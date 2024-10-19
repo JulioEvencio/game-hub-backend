@@ -148,4 +148,32 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @Operation(
+            summary = "Download a game file",
+            description = "Download a game file",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "downloaded file",
+                            content = @Content(
+                                    mediaType = "application/zip",
+                                    schema = @Schema(implementation = InputStreamResource.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping(path = "/file/{game-slug}", produces = "application/zip")
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable(name = "game-slug") String gameSlug) {
+        InputStreamResource response = gameService.downloadFile(gameSlug);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }

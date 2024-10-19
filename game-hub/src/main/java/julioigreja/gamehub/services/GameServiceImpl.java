@@ -34,18 +34,20 @@ public class GameServiceImpl implements GameService {
     private final UserRepository userRepository;
     private final GameRepository gameRepository;
     private final CoverImageRepository coverImageRepository;
+    private final FileRepository fileRepository;
 
     private final FileService fileService;
 
     private static final List<String> IMAGE_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png");
     private static final String ZIP_TYPE = "application/zip";
 
-    public GameServiceImpl(@Value("${api.file.directory}") String fileDirectory, UserRepository userRepository, GameRepository gameRepository, CoverImageRepository coverImageRepository, FileService fileService) {
+    public GameServiceImpl(@Value("${api.file.directory}") String fileDirectory, UserRepository userRepository, GameRepository gameRepository, CoverImageRepository coverImageRepository, FileRepository fileRepository, FileService fileService) {
         this.fileDirectory = fileDirectory;
 
         this.userRepository = userRepository;
         this.gameRepository = gameRepository;
         this.coverImageRepository = coverImageRepository;
+        this.fileRepository = fileRepository;
 
         this.fileService = fileService;
     }
@@ -103,6 +105,14 @@ public class GameServiceImpl implements GameService {
     public InputStreamResource downloadCoverImage(String gameSlug) {
         CoverImageEntity coverImage = coverImageRepository.findByGame_Slug(gameSlug).orElseThrow(() -> new ApiNotFoundException("Cover image not found"));
         InputStream inputStream = fileService.download(coverImage.getFileUrl());
+
+        return new InputStreamResource(inputStream);
+    }
+
+    @Override
+    public InputStreamResource downloadFile(String gameSlug) {
+        FileEntity file = fileRepository.findByGame_Slug(gameSlug).orElseThrow(() -> new ApiNotFoundException("File not found"));
+        InputStream inputStream = fileService.download(file.getFileUrl());
 
         return new InputStreamResource(inputStream);
     }

@@ -20,4 +20,6 @@ public interface GameService {
 
     InputStreamResource downloadCoverImage(String gameSlug);
 
+    InputStreamResource downloadFile(String gameSlug);
+
 }
