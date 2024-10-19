@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -114,10 +113,15 @@ public class GameServiceImpl implements GameService {
         return new InputStreamResource(inputStream);
     }
 
+    @Transactional
     @Override
     public InputStreamResource downloadFile(String gameSlug) {
         FileEntity file = fileRepository.findByGame_Slug(gameSlug).orElseThrow(() -> new ApiNotFoundException("File not found"));
         InputStream inputStream = fileService.download(file.getFileUrl());
+
+        GameEntity game = file.getGame();
+        game.setAmountDownloads(game.getAmountDownloads() + 1L);
+        gameRepository.save(game);
 
         return new InputStreamResource(inputStream);
     }
@@ -164,8 +168,7 @@ public class GameServiceImpl implements GameService {
 
     @Transactional
     private GameEntity createGameEntity(GameUploadRequestDTO dto, CoverImageEntity coverImage, FileEntity file, List<ScreenshotEntity> screenshots) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity user = userRepository.findByUsername(username).orElseThrow(RuntimeException::new);
+        UserEntity user = ApiUtil.findUserLogged(userRepository);
         GameEntity game = new GameEntity();
 
         game.setName(dto.name());
