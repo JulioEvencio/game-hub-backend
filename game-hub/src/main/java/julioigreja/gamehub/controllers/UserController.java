@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import julioigreja.gamehub.dto.controllers.user.UserFindByUsernameResponseDTO;
 import julioigreja.gamehub.dto.controllers.user.UserLoggedResponseDTO;
 import julioigreja.gamehub.exceptions.ApiMessageError;
 import julioigreja.gamehub.services.UserService;
@@ -50,6 +51,34 @@ public class UserController {
     @GetMapping(path = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserLoggedResponseDTO> findUserLogged() {
         UserLoggedResponseDTO response = userService.findUserLogged();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            summary = "Find an user by username",
+            description = "Find an user by username",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "User found",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = UserFindByUsernameResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @GetMapping(path = "/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserFindByUsernameResponseDTO> findByUsername(@PathVariable String username) {
+        UserFindByUsernameResponseDTO response = userService.findByUsername(username);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

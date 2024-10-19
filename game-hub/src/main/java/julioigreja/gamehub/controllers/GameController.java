@@ -57,7 +57,7 @@ public class GameController {
                     )
             }
     )
-    @GetMapping(path = "/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/slug/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GameFindBySlugResponseDTO> findBySlug(@PathVariable String slug) {
         GameFindBySlugResponseDTO response = gameService.findBySlug(slug);
 

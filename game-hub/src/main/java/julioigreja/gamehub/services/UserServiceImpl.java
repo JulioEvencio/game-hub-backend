@@ -1,9 +1,11 @@
 package julioigreja.gamehub.services;
 
+import julioigreja.gamehub.dto.controllers.user.UserFindByUsernameResponseDTO;
 import julioigreja.gamehub.dto.controllers.user.UserLoggedResponseDTO;
 import julioigreja.gamehub.dto.entities.EntityMapperDTO;
 import julioigreja.gamehub.entities.GameEntity;
 import julioigreja.gamehub.entities.UserEntity;
+import julioigreja.gamehub.exceptions.custom.ApiNotFoundException;
 import julioigreja.gamehub.repositories.UserRepository;
 import julioigreja.gamehub.util.ApiUtil;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,22 @@ public class UserServiceImpl implements UserService {
         }
 
         return new UserLoggedResponseDTO(
+                EntityMapperDTO.fromEntity(user),
+                user.getGames().stream().map(EntityMapperDTO::fromEntity).toList()
+        );
+    }
+
+    @Override
+    public UserFindByUsernameResponseDTO findByUsername(String username) {
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new ApiNotFoundException("User not found"));
+
+        user.getGames().sort(Comparator.comparing(GameEntity::getCreatedAt).reversed());
+
+        for (GameEntity game : user.getGames()) {
+            ApiUtil.generateControllerURL(game);
+        }
+
+        return new UserFindByUsernameResponseDTO(
                 EntityMapperDTO.fromEntity(user),
                 user.getGames().stream().map(EntityMapperDTO::fromEntity).toList()
         );
