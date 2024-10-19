@@ -37,13 +37,13 @@ public class GameEntity {
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<ScreenshotEntity> screenshots;
 
-    @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<CommentEntity> comments;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<LikeEntity> likes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 

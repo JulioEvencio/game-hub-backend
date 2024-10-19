@@ -52,7 +52,7 @@ public class UserEntity implements UserDetails {
     )
     private List<RoleEntity> roles;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<GameEntity> games;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

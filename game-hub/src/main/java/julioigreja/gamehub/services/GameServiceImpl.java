@@ -55,7 +55,6 @@ public class GameServiceImpl implements GameService {
         this.fileService = fileService;
     }
 
-    @Transactional
     @Override
     public GameFindBySlugResponseDTO findBySlug(String slug) {
         GameEntity game = gameRepository.findBySlug(slug).orElseThrow(() -> new ApiNotFoundException("Game not found"));
@@ -111,7 +110,6 @@ public class GameServiceImpl implements GameService {
     @Override
     public InputStreamResource downloadCoverImage(String gameSlug) {
         CoverImageEntity coverImage = coverImageRepository.findByGame_Slug(gameSlug).orElseThrow(() -> new ApiNotFoundException("Cover image not found"));
-        System.out.println(coverImage.getFileUrl());
         InputStream inputStream = fileService.download(coverImage.getFileUrl());
 
         return new InputStreamResource(inputStream);

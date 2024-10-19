@@ -21,6 +21,7 @@ public class CustomRestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiMessageError> handlerException(Exception e) {
+        e.printStackTrace();
         ApiMessageError error = new ApiMessageError("Internal Server Error", List.of("Internal server error..."));
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
@@ -28,6 +29,7 @@ public class CustomRestExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiMessageError> handlerRuntimeException(RuntimeException e) {
+        e.printStackTrace();
         ApiMessageError error = new ApiMessageError("Internal Server Error", List.of("Internal server error..."));
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
