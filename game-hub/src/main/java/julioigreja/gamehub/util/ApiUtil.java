@@ -1,12 +1,14 @@
 package julioigreja.gamehub.util;
 
 import julioigreja.gamehub.entities.GameEntity;
+import julioigreja.gamehub.entities.LikeEntity;
 import julioigreja.gamehub.entities.UserEntity;
 import julioigreja.gamehub.repositories.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ApiUtil {
@@ -15,6 +17,16 @@ public class ApiUtil {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return userRepository.findByUsername(username).orElseThrow(RuntimeException::new);
+    }
+
+    public static Long getLikesTotal(List<LikeEntity> likes) {
+        long likesTotal = 0L;
+
+        for (LikeEntity like : likes) {
+            likesTotal += (like.isLike()) ? 1L : 0L;
+        }
+
+        return likesTotal;
     }
 
     public static void generateControllerURL(GameEntity game) {

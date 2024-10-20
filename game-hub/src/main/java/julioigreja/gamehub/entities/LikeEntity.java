@@ -15,11 +15,11 @@ public class LikeEntity {
     @Column(name = "is_like", nullable = false)
     private boolean like;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "game_id")
     private GameEntity game;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 

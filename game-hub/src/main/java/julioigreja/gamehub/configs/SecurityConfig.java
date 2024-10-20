@@ -59,6 +59,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/games").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/games/slug/{slug}", "/api/games", "/api/games/cover-image/{game-slug}", "/api/games/file/{game-slug}", "/api/games/screenshot/{game-slug}/{screenshot-uuid}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/comments/game/{game-slug}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/likes/game/{game-slug}").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/likes/game/{game-slug}").authenticated()
                         .anyRequest().denyAll()
                 )
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
