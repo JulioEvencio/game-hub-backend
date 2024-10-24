@@ -8,5 +8,5 @@ public record CommentDTO(
         UUID id,
         String content,
         Instant createdAt,
-        String user
+        UserDTO user
 ) implements Serializable {}

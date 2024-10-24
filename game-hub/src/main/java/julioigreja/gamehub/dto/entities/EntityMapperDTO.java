@@ -25,7 +25,7 @@ public class EntityMapperDTO {
     }
 
     public static CommentDTO fromEntity(CommentEntity entity) {
-        return new CommentDTO(entity.getId(), entity.getContent(), entity.getCreatedAt(), entity.getUser().getUsername());
+        return new CommentDTO(entity.getId(), entity.getContent(), entity.getCreatedAt(), EntityMapperDTO.fromEntity(entity.getUser()));
     }
 
     public static LikeDTO fromEntity(LikeEntity entity) {
