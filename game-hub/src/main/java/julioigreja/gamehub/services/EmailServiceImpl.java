@@ -27,23 +27,39 @@ public class EmailServiceImpl implements EmailService {
     @Async
     @Override
     public void sendEmailRegister(String username, String email) {
+        Context context = new Context();
+
+        context.setVariable("username", username);
+        context.setVariable("frontEndURL", frontEndURL);
+
+        this.sendEmail(email, "Welcome to Game Hub", context, "welcome-email");
+    }
+
+    @Async
+    @Override
+    public void sendEmailPasswordUpdate(String username, String email) {
+        Context context = new Context();
+
+        context.setVariable("username", username);
+        context.setVariable("frontEndURL", frontEndURL);
+
+        this.sendEmail(email, "Password Update", context, "password-update-email");
+    }
+
+    private void sendEmail(String email, String subject, Context context, String templateEmail) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
             mimeMessageHelper.setTo(email);
-            mimeMessageHelper.setSubject("Welcome to Game Hub");
+            mimeMessageHelper.setSubject(subject);
 
-            Context context = new Context();
-            context.setVariable("username", username);
-            context.setVariable("frontEndURL", frontEndURL);
-
-            String htmlContent = templateEngine.process("welcome-email", context);
+            String htmlContent = templateEngine.process(templateEmail, context);
             mimeMessageHelper.setText(htmlContent, true);
 
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
-            // Code
+            e.printStackTrace();
         }
     }
 

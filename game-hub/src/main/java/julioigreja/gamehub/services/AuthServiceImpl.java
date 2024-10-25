@@ -1,10 +1,7 @@
 package julioigreja.gamehub.services;
 
 import jakarta.transaction.Transactional;
-import julioigreja.gamehub.dto.controllers.auth.LoginRequestDTO;
-import julioigreja.gamehub.dto.controllers.auth.LoginResponseDTO;
-import julioigreja.gamehub.dto.controllers.auth.RegisterRequestDTO;
-import julioigreja.gamehub.dto.controllers.auth.RegisterResponseDTO;
+import julioigreja.gamehub.dto.controllers.auth.*;
 import julioigreja.gamehub.dto.entities.EntityMapperDTO;
 import julioigreja.gamehub.entities.RoleEntity;
 import julioigreja.gamehub.entities.UserEntity;
@@ -12,6 +9,7 @@ import julioigreja.gamehub.exceptions.custom.ApiAuthenticationException;
 import julioigreja.gamehub.exceptions.custom.ApiNotFoundException;
 import julioigreja.gamehub.repositories.RoleRepository;
 import julioigreja.gamehub.repositories.UserRepository;
+import julioigreja.gamehub.util.ApiUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +64,22 @@ public class AuthServiceImpl implements AuthService {
         List<String> roles = user.getRoles().stream().map(RoleEntity::getName).toList();
 
         return new LoginResponseDTO(jwtService.createAccessToken(user.getUsername(), roles));
+    }
+
+    @Transactional
+    @Override
+    public PasswordUpdateResponseDTO passwordUpdate(PasswordUpdateRequestDTO dto) {
+        UserEntity user = ApiUtil.findUserLogged(userRepository);
+
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
+
+        userRepository.save(user);
+
+        emailService.sendEmailPasswordUpdate(user.getUsername(), user.getEmail());
+
+        List<String> roles = user.getRoles().stream().map(RoleEntity::getName).toList();
+
+        return new PasswordUpdateResponseDTO(jwtService.createAccessToken(user.getUsername(), roles));
     }
 
     private void validateUserExists(RegisterRequestDTO dto) {

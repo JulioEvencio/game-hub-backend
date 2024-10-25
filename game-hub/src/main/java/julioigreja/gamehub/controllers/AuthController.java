@@ -4,21 +4,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import julioigreja.gamehub.dto.controllers.auth.LoginRequestDTO;
-import julioigreja.gamehub.dto.controllers.auth.LoginResponseDTO;
-import julioigreja.gamehub.dto.controllers.auth.RegisterRequestDTO;
-import julioigreja.gamehub.dto.controllers.auth.RegisterResponseDTO;
+import julioigreja.gamehub.dto.controllers.auth.*;
 import julioigreja.gamehub.exceptions.ApiMessageError;
 import julioigreja.gamehub.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/auth")
@@ -83,6 +78,35 @@ public class AuthController {
     @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO dto) {
         LoginResponseDTO response = authService.login(dto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(
+            security = @SecurityRequirement(name = "bearerAuth"),
+            summary = "Update password",
+            description = "Update password",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Updated password",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = PasswordUpdateResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @PatchMapping(path = "/password", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PasswordUpdateResponseDTO> passwordUpdate(@RequestBody @Valid PasswordUpdateRequestDTO dto) {
+        PasswordUpdateResponseDTO response = authService.passwordUpdate(dto);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

@@ -1,14 +1,13 @@
 package julioigreja.gamehub.services;
 
-import julioigreja.gamehub.dto.controllers.auth.LoginRequestDTO;
-import julioigreja.gamehub.dto.controllers.auth.LoginResponseDTO;
-import julioigreja.gamehub.dto.controllers.auth.RegisterRequestDTO;
-import julioigreja.gamehub.dto.controllers.auth.RegisterResponseDTO;
+import julioigreja.gamehub.dto.controllers.auth.*;
 
 public interface AuthService {
 
     RegisterResponseDTO register(RegisterRequestDTO dto);
 
     LoginResponseDTO login(LoginRequestDTO dto);
+
+    PasswordUpdateResponseDTO passwordUpdate(PasswordUpdateRequestDTO dto);
 
 }
