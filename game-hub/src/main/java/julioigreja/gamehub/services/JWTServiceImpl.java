@@ -44,6 +44,22 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
+    public String createAccessTokenPasswordRecovery(String username, List<String> roles) {
+        Instant now = Instant.now();
+        Instant validity = now.plusMillis(900000L);
+
+        return JWT.create()
+                .withClaim("roles", roles)
+                .withIssuedAt(Date.from(now))
+                .withExpiresAt(Date.from(validity))
+                .withSubject(username)
+                .withIssuer(this.getIssueURL())
+                .withAudience(audienceURL)
+                .sign(Algorithm.HMAC256(secretKey.getBytes()))
+                .strip();
+    }
+
+    @Override
     public boolean validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());

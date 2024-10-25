@@ -82,6 +82,18 @@ public class AuthServiceImpl implements AuthService {
         return new PasswordUpdateResponseDTO(jwtService.createAccessToken(user.getUsername(), roles));
     }
 
+    @Override
+    public PasswordRecoveryResponseDTO passwordRecovery(PasswordRecoveryRequestDTO dto) {
+        UserEntity user = userRepository.findByEmail(dto.email()).orElseThrow(() -> new ApiNotFoundException("E-mail not found"));
+
+        List<String> roles = user.getRoles().stream().map(RoleEntity::getName).toList();
+        String accessToken = jwtService.createAccessTokenPasswordRecovery(user.getUsername(), roles);
+
+        emailService.sendEmailPasswordRecovery(user.getUsername(), accessToken, user.getEmail());
+
+        return new PasswordRecoveryResponseDTO("Email sent to: " + user.getEmail());
+    }
+
     private void validateUserExists(RegisterRequestDTO dto) {
         if (userRepository.findByUsername(dto.username()).isPresent()) {
             throw new ApiNotFoundException("Username already exists");

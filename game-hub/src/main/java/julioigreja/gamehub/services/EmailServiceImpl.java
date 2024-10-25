@@ -46,6 +46,17 @@ public class EmailServiceImpl implements EmailService {
         this.sendEmail(email, "Password Update", context, "password-update-email");
     }
 
+    @Async
+    @Override
+    public void sendEmailPasswordRecovery(String username, String accessToken, String email) {
+        Context context = new Context();
+
+        context.setVariable("username", username);
+        context.setVariable("frontEndURL", frontEndURL + "/password-recovery/" + accessToken);
+
+        this.sendEmail(email, "Password Recovery", context, "password-recovery-email");
+    }
+
     private void sendEmail(String email, String subject, Context context, String templateEmail) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();

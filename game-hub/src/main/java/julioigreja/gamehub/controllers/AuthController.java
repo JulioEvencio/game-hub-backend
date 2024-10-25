@@ -111,4 +111,32 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @Operation(
+            summary = "Password Recovery",
+            description = "Send an e-mail to recover the password",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "E-mail sent",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = PasswordRecoveryResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            description = "Request error",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = ApiMessageError.class)
+                            )
+                    )
+            }
+    )
+    @PostMapping(path = "/password-recovery", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PasswordRecoveryResponseDTO> passwordRecovery(@RequestBody @Valid PasswordRecoveryRequestDTO dto) {
+        PasswordRecoveryResponseDTO response = authService.passwordRecovery(dto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }

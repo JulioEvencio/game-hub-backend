@@ -10,4 +10,6 @@ public interface AuthService {
 
     PasswordUpdateResponseDTO passwordUpdate(PasswordUpdateRequestDTO dto);
 
+    PasswordRecoveryResponseDTO passwordRecovery(PasswordRecoveryRequestDTO dto);
+
 }

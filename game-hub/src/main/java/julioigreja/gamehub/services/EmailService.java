@@ -6,4 +6,6 @@ public interface EmailService {
 
     void sendEmailPasswordUpdate(String username, String email);
 
+    void sendEmailPasswordRecovery(String username, String accessToken, String email);
+
 }
