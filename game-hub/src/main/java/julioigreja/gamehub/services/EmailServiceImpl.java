@@ -37,6 +37,19 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
+    public void sendEmailGamePublished(String username, String gameName, String gameSlug, String email) {
+        Context context = new Context();
+
+        context.setVariable("username", username);
+        context.setVariable("gameName", gameName);
+        context.setVariable("gameLink", frontEndURL + "/game/" + gameSlug);
+        context.setVariable("frontEndURL", frontEndURL);
+
+        this.sendEmail(email, "Game Published", context, "game-published-email");
+    }
+
+    @Async
+    @Override
     public void sendEmailPasswordUpdate(String username, String email) {
         Context context = new Context();
 

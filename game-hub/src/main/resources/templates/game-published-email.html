@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Published</title>
+</head>
+<body>
+    <h1>Congratulations, <span th:text="${username}">Username</span>!</h1>
+
+    <p>
+        Your game, <strong th:text="${gameName}">Game Name</strong>, has been successfully uploaded to our platform.
+    </p>
+
+    <p>
+        You can view and share your game at the following link:
+    </p>
+
+    <p>
+        <a th:href="${gameLink}" target="_blank">Play Your Game</a>
+    </p>
+
+    <p>
+        Thank you for sharing your creativity with our community!
+    </p>
+
+    <p>
+        Access Game Hub at <a th:href="${frontEndURL}" target="_blank">this link</a>
+    </p>
+</body>
+</html>

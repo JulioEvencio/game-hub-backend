@@ -37,11 +37,12 @@ public class GameServiceImpl implements GameService {
     private final ScreenshotRepository screenshotRepository;
 
     private final FileService fileService;
+    private final EmailService emailService;
 
     private static final List<String> IMAGE_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png");
     private static final String ZIP_TYPE = "application/zip";
 
-    public GameServiceImpl(@Value("${api.file.directory}") String fileDirectory, UserRepository userRepository, GameRepository gameRepository, CoverImageRepository coverImageRepository, FileRepository fileRepository, ScreenshotRepository screenshotRepository, FileService fileService) {
+    public GameServiceImpl(@Value("${api.file.directory}") String fileDirectory, UserRepository userRepository, GameRepository gameRepository, CoverImageRepository coverImageRepository, FileRepository fileRepository, ScreenshotRepository screenshotRepository, FileService fileService, EmailService emailService) {
         this.fileDirectory = fileDirectory;
 
         this.userRepository = userRepository;
@@ -51,6 +52,7 @@ public class GameServiceImpl implements GameService {
         this.screenshotRepository = screenshotRepository;
 
         this.fileService = fileService;
+        this.emailService = emailService;
     }
 
     @Override
@@ -101,6 +103,8 @@ public class GameServiceImpl implements GameService {
         }
 
         GameEntity game = this.createGameEntity(dto, coverImageEntity, fileEntity, screenshotEntities);
+
+        emailService.sendEmailGamePublished(game.getUser().getUsername(), game.getName(), game.getSlug(), game.getUser().getEmail());
 
         return new GameUploadResponseDTO(EntityMapperDTO.fromEntity(game));
     }
